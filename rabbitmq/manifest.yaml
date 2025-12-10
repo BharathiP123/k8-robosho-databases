@@ -26,7 +26,7 @@ spec:
         image: rabbitmq:3
         imagePullPolicy: Always
         volumeMounts:
-        - name: rabbitmq
+        - name: rabbitmq-claim
           mountPath: /var/lib/rabbitmq
         env:
           - name: RABBITMQ_DEFAULT_USER
