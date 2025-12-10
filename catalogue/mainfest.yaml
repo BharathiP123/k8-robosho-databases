@@ -100,4 +100,4 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 6
+        averageUtilization: 60 ## in the real project 70
