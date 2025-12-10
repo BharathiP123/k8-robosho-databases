@@ -49,15 +49,15 @@ spec:
             memory: "128Mi"
          
          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8080
-            failureThreshold: 1
-            periodSeconds: 15
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 15
          livenessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: liveness-port
           failureThreshold: 1
           periodSeconds: 15
 ---
@@ -71,7 +71,6 @@ spec:
     project: roboshop
     tier: backend
     componet: user
-   
  ports:
    - protocol: TCP
      port: 8080 ##service port
