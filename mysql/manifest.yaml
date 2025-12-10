@@ -35,7 +35,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: mysq
-        image: mysq:7.0
+        image: bharathipotla/mysql:v1
         ports:
         - containerPort: 3306
           name: mysq
