@@ -1,61 +1,45 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql
-  namespace: roboshop
-data:
-  my.cnf: |
-    [mysqld]
-    innodb_redo_log_capacity = 2G
----
-
 ##service,headless service,statefulset
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysq
+  name: rabbitmq
   namespace: roboshop
 spec:
   selector:
     matchLabels:
         project: roboshop
-        component: mysq
+        component: rabbitmq
         tier: db   # has to match .spec.template.metadata.labels
-  serviceName: "mysq-headless"
+  serviceName: "rabbitmq-headless"
   replicas: 1 # by default is 1
   minReadySeconds: 10 # by default is 0
   template:
     metadata:
       labels:
         project: roboshop
-        component: mysq
+        component: rabbitmq
         tier: db   # has to match .spec.selector.matchLabels
     spec:
       terminationGracePeriodSeconds: 10
       containers:
-      - name: mysq
-        image: bharathipotla/mysql:v1
+      - name: rabbitmq-claim
+        image: rabbitmq:3
         imagePullPolicy: Always
-        ports:
-        - containerPort: 3306
-          name: mysq
-        
         volumeMounts:
-        - name: mysql-config
-          mountPath: /etc/mysql/conf.d/my.cnf
-          subPath: my.cnf
-        - name: mysq-claim
-          mountPath: /data/db
-
-      volumes:
-        - name: mysql-config
-          configMap:
-            name: mysql
-  ##pvc
+        - name: rabbitmq
+          mountPath: /var/lib/rabbitmq
+        env:
+          - name: RABBITMQ_DEFAULT_USER
+            value: roboshop
+          - name: RABBITMQ_DEFAULT_PASS
+            value: roboshop123 
+        ports:
+        - containerPort: 5672
+          name: rabbitmq
+          ##pvc
   volumeClaimTemplates:
   - metadata:
-      name: mysq-claim
+      name: rabbitmq-claim
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "ebs-sc"
@@ -67,30 +51,30 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysq
+  name: rabbitmq
 spec:
  selector:
    project: roboshop
-   component: mysq
+   component: rabbitmq
    tier: db
  ports:
    - protocol: TCP
-     port: 3306
-     targetPort: 3306 ##This is container port
+     port: 5672
+     targetPort: 5672 ##This is container port
 
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
- name: mysq-headless
+ name: rabbitmq-headless
 spec:
  clusterIP: None
  selector:
    project: roboshop
-   component: mysq
+   component: rabbitmq
    tier: db
  ports:
    - protocol: TCP
-     port: 3306
-     targetPort: 3306 ##This is container port
+     port: 5672
+     targetPort: 5672 ##This is container port
