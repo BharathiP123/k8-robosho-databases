@@ -42,8 +42,8 @@ spec:
               name: user
          resources:
           requests:
-            cpu: "50m"
-            memory: "80Mi"
+            cpu: "100m"
+            memory: "128Mi"
           limits:
             cpu: "100m"
             memory: "128Mi"
