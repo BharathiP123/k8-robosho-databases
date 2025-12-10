@@ -36,6 +36,7 @@ spec:
       containers:
       - name: mysq
         image: bharathipotla/mysql:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 3306
           name: mysq
